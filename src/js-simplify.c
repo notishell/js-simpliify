@@ -28,7 +28,7 @@ struct Options {
  * default value
  */
 struct Options gOptions = {
-	"simplify.txt"
+	"simplify.js"
 };
 
 /**
@@ -199,17 +199,18 @@ int js_replace_string_to_dot_handle(int argc, char **argv, int arglen[])
 {
 	int i;
 
-	if (argc != 2) {
+	if (argc != 1) {
 		return (-1);
 	}
 
-	argv[1][0] = '.';
-	for (i = 1; i < arglen[1]; i++) {
-		switch (argv[1][i]) {
-			case '"':
+	argv[0][0] = '.';
+	for (i = 1; i < arglen[0]; i++) {
+		switch (argv[0][i]) {
+			case '\"':
+			case '\'':
 			case '[':
 			case ']':
-				argv[1][i] = ' ';
+				argv[0][i] = ' ';
 				break;
 			default:
 				break;
@@ -242,7 +243,7 @@ struct js_handler handlers[] = {
 		/**
 		 *
 		 */
-		"\\b[a-zA-Z][a-zA-Z0-9]\\b\\('([a-zA-Z0-9]+)',[ ]*([0-9]+),[ ]*([0-9]+)\\)",
+		"\\b[a-zA-Z][a-zA-Z0-9]\\('([a-zA-Z0-9]+)',[ ]*([0-9]+),[ ]*([0-9]+)\\)",
 		1,
 		0,
 		js_decrypt_string_handle
@@ -251,7 +252,7 @@ struct js_handler handlers[] = {
 		/**
 		 *
 		 */
-		"(\\[\"[a-zA-Z][a-zA-Z0-9]+\"\\])",
+		"\\[[ ]*(?:(?:\"[a-zA-Z][a-zA-Z0-9]+\")|(?:\'[a-zA-Z][a-zA-Z0-9]+\'))[ ]*\\]",
 		1,
 		0,
 		js_replace_string_to_dot_handle
@@ -282,7 +283,7 @@ void js_form(char *output)
 			}
 		}
 	}
-	*b = *a;
+	*b = '\0';
 }
 
 int js_simplify(char *input, char *output)
@@ -339,13 +340,15 @@ int js_simplify(char *input, char *output)
 			r = pcre_exec(pc, NULL, output, len, offset, 0, ovector, vsz);
 			if (r < 0) {
 				if (r != PCRE_ERROR_NOMATCH) {
+					fprintf(stderr, "PCRE_ERROR_NOMATCH\n");
 					goto bail;
 				} else {
 					if (offset == 0) {
+						fprintf(stderr, "r=%d\n", r);
+						fprintf(stderr, "[%s]\n", output);
 						break;
 					} else {
 						offset = 0;
-						len = strlen(output);
 					}
 				}
 			} else {
@@ -357,11 +360,13 @@ int js_simplify(char *input, char *output)
 					goto bail;
 				}
 				offset = ovector[1];
+				memset(ovector, 0 , sizeof(int) * vsz);
 			}
 		}
 	}
 
 	js_form(output);
+	len = strlen(output);
 
 	result = 0;
 
@@ -383,10 +388,11 @@ bail:
 	}
 
 	if (result != 0) {
+		fprintf(stderr, "failed\n");
 		return (-1);
 	}
 
-	return (strlen(output) + 1);
+	return (len);
 }
 
 int js_create_directroy(const char *path)
@@ -420,11 +426,7 @@ int js_create_file(const char *path)
 	int i, fd;
 	char tmp[512];
 
-	if (access(path, W_OK | F_OK) == 0) {
-		return (open(path, O_WRONLY | O_BINARY));
-	}
-
-	fd = open(path, O_WRONLY | O_BINARY | O_CREAT);
+	fd = open(path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
 	if (fd >= 0) {
 		return (fd);
 	}
@@ -437,7 +439,7 @@ int js_create_file(const char *path)
 		}
 	}
 	if (js_create_directroy(tmp) == 0) {
-		return (open(path, O_WRONLY | O_BINARY | O_CREAT));
+		return (open(path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO));
 	}
 
 	return (-1);
