@@ -164,8 +164,8 @@ void js_decrypt_string(char *p, int len, int a, int b) {
 	}
 
 	p[0] = '"';
-	for (i = 0, j = 1; i < len - 1; i++) {
-		if (i % u >= b) {
+	for (i = 1, j = 1; i < len - 1; i++) {
+		if ((i % u) <= a && (i % u) >= 1) {
 			p[j++] = p[i];
 		}
 	}
@@ -220,6 +220,191 @@ int js_replace_string_to_dot_handle(int argc, char **argv, int arglen[])
 	return (0);
 }
 
+int js_simplify_for_1_handle(int argc, char **argv, int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 5) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+	memcpy(tmp + strlen(tmp), argv[3], arglen[3]);
+	memcpy(tmp + strlen(tmp), argv[2], arglen[2]);
+	memcpy(tmp + strlen(tmp), argv[4], arglen[4]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
+int js_simplify_for_2_handle(int argc, char **argv, int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 5) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+	memcpy(tmp + strlen(tmp), argv[4], arglen[4]);
+	memcpy(tmp + strlen(tmp), argv[3], arglen[3]);
+	memcpy(tmp + strlen(tmp), argv[2], arglen[2]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
+int js_simplify_switch_1_handle(int argc, char **argv, int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 3) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+	memcpy(tmp + strlen(tmp), argv[2], arglen[2]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
+int js_simplify_switch_2_handle(int argc, char **argv, int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 4) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+	memcpy(tmp + strlen(tmp), argv[2], arglen[2]);
+	memcpy(tmp + strlen(tmp), argv[3], arglen[3]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
+int js_simplify_while_1_handle(int argc, char *argv[], int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 2) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
+int js_simplify_while_2_handle(int argc, char *argv[], int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 3) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+	memcpy(tmp + strlen(tmp), argv[2], arglen[2]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
+int js_simplify_if_1_handle(int argc, char *argv[], int arglen[])
+{
+	int i;
+	char *tmp = NULL;
+
+	if (argc != 2) {
+		return (-1);
+	}
+
+	tmp = (char *) malloc(arglen[0]);
+	if (tmp == NULL) {
+		return (-1);
+	}
+	memset(tmp, 0, arglen[0]);
+
+	memcpy(tmp + strlen(tmp), argv[1], arglen[1]);
+
+	memcpy(argv[0], tmp, strlen(tmp));
+	memset(argv[0] + strlen(tmp), ' ', arglen[0] - strlen(tmp));
+
+	free(tmp);
+
+	return (0);
+}
+
 struct js_handler handlers[] = {
 	{
 		/**
@@ -243,7 +428,7 @@ struct js_handler handlers[] = {
 		/**
 		 *
 		 */
-		"\\b[a-zA-Z][a-zA-Z0-9]\\('([a-zA-Z0-9]+)',[ ]*([0-9]+),[ ]*([0-9]+)\\)",
+		"\\b[a-zA-Z][a-zA-Z0-9]\\('([a-zA-Z0-9/\\-]+)',[ ]*([0-9]+),[ ]*([0-9]+)\\)",
 		1,
 		0,
 		js_decrypt_string_handle
@@ -252,36 +437,112 @@ struct js_handler handlers[] = {
 		/**
 		 *
 		 */
-		"\\[[ ]*(?:(?:\"[a-zA-Z][a-zA-Z0-9]+\")|(?:\'[a-zA-Z][a-zA-Z0-9]+\'))[ ]*\\]",
+		"\\[[ ]*(?:(?:\"[a-zA-Z0-9:/]+\")|(?:\'[a-zA-Z0-9:/]+\'))[ ]*\\]",
 		1,
 		0,
 		js_replace_string_to_dot_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var[^;]+;[^f;]+for[^+]+\\+\\+[^+]+\\+[^+]+\\+{3,3}[^\\{]+\\{[^\\{]+\\{(\\s*[^;]+;)[^\\{]+\\{(\\s*[^;]+;)[^\\{;]+\\{(\\s*[^;]+;)[^\\{]+\\{(\\s*[^;]+;)\\s*\\}\\s*\\}",
+		1,
+		0,
+		js_simplify_for_1_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var[^;]+;[^f;]+for[^+]+\\+\\+[^+]+\\+[^+]+\\+{3,3}[^\\{]+\\{[^\\{]+\\{(\\s*[^;]+;)[^\\{]+\\{(\\s*[^;]+;)[^\\{]+\\{(\\s*[^;]+;)[^\\{]+\\{(\\s*[^;]+;)\\s*\\}\\s*\\}",
+		1,
+		0,
+		js_simplify_for_2_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var[^;\\{]+;\\s*var[^;]+;\\s*switch\\s*[^\\{;]+\\{\\s*case[^:]+:(\\s*[^;]+;)\\s*case[^:]+:(\\s*[^;]+;)\\s*\\w+[^:]+:\\s*[^;]+;\\s*\\}",
+		1,
+		0,
+		js_simplify_switch_1_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var[^;\\{]+;\\s*var[^;]+;\\s*switch\\s*[^\\{;]+\\{\\s*case[^:]+:(\\s*[^;]+;)\\s*case[^:]+:(\\s*[^;]+;)\\s*\\w+[^:]+:(\\s*[^;]+;)\\s*[^;]+;\\s*\\}",
+		1,
+		0,
+		js_simplify_switch_2_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var\\s*[^;\\{]+;\\s*while\\s*\\(\\s*![^\\{;]+\\{\\s*if\\s*\\([^\\)\\{;]+\\)\\s*\\{(\\s*[^;]+;[^\\w]*)[^;]+;\\s*[^;]+;\\s*\\}\\s*[^;]+;\\s*\\}",
+		1,
+		0,
+		js_simplify_while_1_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var\\s*[^;\\{]+;\\s*while[^\\{]+\\{\\s*if[^\\{]+\\{(\\s*[^;]+;)\\s*[^;]+;\\s*continue\\s*;\\s*\\}\\s*[^\\}]+\\}\\s*[^\\}]+\\}",
+		1,
+		0,
+		js_simplify_while_1_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"var\\s*[^;\\{]+;\\s*while\\s*\\(\\s*![^\\{;]+\\{\\s*if\\s*\\([^\\)\\{;]+\\)\\s*\\{(\\s*[^;]+;)\\s*[^;]+;(\\s*[^;]+;)\\s*[^;]+;\\s*\\}\\s*[^;]+;\\s*\\}",
+		1,
+		0,
+		js_simplify_while_2_handle
+	},
+	{
+		/**
+		 *
+		 */
+		"if\\s*\\(!\\d\\s*\\)\\s+\\{[^\\}]+\\}\\s*else\\s*\\{[^\\}]+\\}\\s*if\\s*\\([^\\{]+\\{\\s*[^\\};]+;\\s*\\}\\s*if\\s*\\([^\\{]+\\{(\\s*[^\\};]+;)\\s*\\}\\s*else\\s*(?:\\{[^\\}\\{]+\\}|\\{[^\\}\\{]+\\{[^\\}]+\\}\\s*\\})",
+		1,
+		0,
+		js_simplify_if_1_handle
 	},
 };
 
 void js_form(char *output)
 {
+	int word, blank;
 	char *a = output, *b = output, last;
 
-	while ((*b++ = *a++) != '\0') {
-		while (*a == ' ') {
-			*b++ = *a++;
-		}
-		while (*a != '\0' && *a != '\n') {
-			while (*a != '\0' && *a != '\n' && *a != ' ') {
-				last = (*b++ = *a++);
+	word = blank = 0;
+	while (*a != '\0') {
+		if ((*a >= 'a' && *a <= 'z') || (*a >= 'A' && *a <= 'Z') || (*a >= '0' && *a <= '9') || *a == '_') {
+			if (blank != 0) {
+				b++;
 			}
-			if (*a != '\0' && *a != '\n' && *a == ' ') {
-				*b = *a++;
-				while (*a != '\0' && *a == ' ') {
-					a++;
+			word++;
+			blank = 0;
+			*b++ = *a;
+		} else {
+			if (*a == ' ' || *a == '\r' || *a == '\n' || *a == '\v' || *a == '\t') {
+				*b = ' ';
+				if (word != 0) {
+					blank = 1;
 				}
-				if (((*a >= 'a' && *a <= 'z') || (*a >= 'A' && *a <= 'Z') || (*a >= '0' && *a <= '9') || *a == '_')
-						&& ((last >= 'a' && last <= 'z') || (last >= 'A' && last <= 'Z') || (last >= '0' && last <= '9') || last == '_')){
-					b++;
-				}
+			} else {
+				*b++ = *a;
+				blank = 0;
 			}
+			word = 0;
 		}
+		a++;
 	}
 	*b = '\0';
 }
@@ -344,8 +605,6 @@ int js_simplify(char *input, char *output)
 					goto bail;
 				} else {
 					if (offset == 0) {
-						fprintf(stderr, "r=%d\n", r);
-						fprintf(stderr, "[%s]\n", output);
 						break;
 					} else {
 						offset = 0;
