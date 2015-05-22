@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ali_2dua_2dreverse',['ali-ua-reverse',['../index.html',1,'']]]
+  ['js_2dsimplify',['js-simplify',['../index.html',1,'']]]
 ];
