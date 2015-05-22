@@ -27,7 +27,7 @@ struct Options {
 /**
  * default value
  */
-struct Options gOptions = {
+static struct Options gOptions = {
 	"simplify.js"
 };
 
@@ -781,7 +781,7 @@ bail:
  */
 void usage(void)
 {
-    fprintf(stderr, "Copyright (C) 2007 The Android Open Source Project\n\n");
+    fprintf(stderr, "Copyright (C) " PACKAGE_VERSION " notishell<at>gmail.com\n\n");
     fprintf(stderr, "%s: [-o out] file.js\n", gProgName);
     fprintf(stderr, "\n");
     fprintf(stderr, " -h : help\n");
@@ -794,8 +794,6 @@ void usage(void)
 int main (int argc, char* const argv[])
 {
     int ic, us = 0, result = 0;
-/*
-    memset(&gOptions, 0, sizeof(gOptions));
 
     while (1) {
         ic = getopt(argc, argv, "ho:");
@@ -814,7 +812,6 @@ int main (int argc, char* const argv[])
     }
 
     if (optind == argc) {
-        fprintf(stderr, "%s: no file specified\n", gProgName);
         us = 1;
     }
 
@@ -826,6 +823,6 @@ int main (int argc, char* const argv[])
     if (optind < argc) {
         result = js_simplify_file(argv[optind++], gOptions.outFile);
     }
-*/result = js_simplify_file("/home/liaojun.lj/ua_form.js", gOptions.outFile);
+
     return (result != 0);
 }
